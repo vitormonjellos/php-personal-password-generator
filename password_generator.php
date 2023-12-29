@@ -1,80 +1,64 @@
 <?php
 
-function print_array($array_string) {
-    foreach($array_string as $a) {
+function print_array($arrayString) {
+    foreach($arrayString as $a) {
         echo "$a";
     }
 }
 
 function command_line_arguments($args) {
-    $length = null;
+    $lenght = null;
     foreach ($args as $arg) {
-        if (preg_match('/^--length=(\d+)$/', $arg, $matches)) {
-            $length = (int)$matches[1];
+        if (preg_match('/^--lenght=(\d+)$/', $arg, $matches)) {
+            $lenght = (int)$matches[1];
             break;
         }
     }
-    return $length;
+    return $lenght;
+}
+
+function weak_password_reset($passwordLen) {
+
+    echo "Your password has ", $passwordLen," or less characters. This means that it is probably weak.\n";
+    $answer = readline('Do you want to keep it? [Y/N] ');
+    if (strtoupper($answer) == 'N') {
+        echo "We will generate a new password. We advise a password with more than 12 characters!\n";
+        $new_lenght = (int)readline("How many characters would you like? ");
+        if ($new_lenght > $passwordLen) {
+            $chars = characters_generator();
+            $finalPassword = password_generator($chars, $new_lenght) . "\n";
+            echo "Your new password is: $finalPassword";
+            exit;
+        } else {
+            echo "Invalid lenght specified. It must have more then $passwordLen characters\n";
+            exit;
+        }
+    } elseif ($answer != 'Y') {
+        echo "Invalid input. Please respond with 'Y' for Yes or 'N' for No.\n";
+        exit;
+    }
+
 }
 
 function check_password_lenght($password) {
-    $passwordLength = strlen($password) - 1;
+    $passwordLenght = strlen($password) - 1;
     $complexityMessage = check_password_complexity($password);
 
     switch (true) {
-        case ($passwordLength <= 6):
-            echo "Your password has 6 or less characters. This means that it is really weak.\n";
-            $answer = readline('Do you want to keep it? [Y/N] ');
-            if (strtoupper($answer) == 'N') {
-                echo "We will generate a new password. We advise a password with more than 12 characters!\n";
-                $new_length = (int)readline("How many characters would you like? ");
-                if ($new_length > 0) {
-                    $chars = characters_generator();
-                    $final_password = password_generator($chars, $new_length) . "\n";
-                    echo "Your new password is: $final_password";
-                    exit;
-                } else {
-                    echo "Invalid length specified.\n";
-                    exit;
-                }
-            } elseif ($answer != 'Y') {
-                echo "Invalid input. Please respond with 'Y' for Yes or 'N' for No.\n";
-                exit;
-            }
-            break;
-            break;
-    
-        case ($passwordLength <= 8):
-            echo "Your password has 8 or less characters. This means that it is probably weak.\n";
-            $answer = readline('Do you want to keep it? [Y/N] ');
-            if (strtoupper($answer) == 'N') {
-                echo "We will generate a new password. We advise a password with more than 12 characters!\n";
-                $new_length = (int)readline("How many characters would you like? ");
-                if ($new_length > 0) {
-                    $chars = characters_generator();
-                    $final_password = password_generator($chars, $new_length) . "\n";
-                    echo "Your new password is: $final_password";
-                    exit;
-                } else {
-                    echo "Invalid length specified.\n";
-                    exit;
-                }
-            } elseif ($answer != 'Y') {
-                echo "Invalid input. Please respond with 'Y' for Yes or 'N' for No.\n";
-                exit;
-            }
-            break;
+        case ($passwordLenght > 16):
+            return 'Your password is really strong.';
 
-        case ($passwordLength <= 12):
-            return "Your password is good";
-
-        case ($passwordLength <= 16):
+        case ($passwordLenght > 12):
             return "Your password is strong";
 
+        case ($passwordLenght > 8):
+            return "Your password is acceptable";
+
         default:
-            return 'Your password is really strong.';
-    }
+            weak_password_reset($passwordLenght);
+        }
 }
+
 
 function check_password_complexity($password) {
     $patterns = [
@@ -95,15 +79,15 @@ function check_password_complexity($password) {
     return "includes invalid characters";
 } 
 
-function password_generator($chars, $passwordlength) {
+function password_generator($chars, $passwordLenght) {
     
-    $main_password = '';
-    $passwordsize = strlen(implode($chars));
-    for($i = 0; $i < $passwordlength; ++$i) {
-        $randCharIndex = random_int(0, $passwordsize - 1);
-        $main_password .= $chars[$randCharIndex];
+    $mainPassword = '';
+    $passwordSize = strlen(implode($chars));
+    for($i = 0; $i < $passwordLenght; ++$i) {
+        $randCharIndex = random_int(0, $passwordSize - 1);
+        $mainPassword .= $chars[$randCharIndex];
     }
-    return $main_password;
+    return $mainPassword;
 }
 
 
@@ -117,18 +101,18 @@ function characters_generator() {
     return $chars;
 }
 
-$pass_lenght = command_line_arguments($argv);
+$passLenght = command_line_arguments($argv);
 
-if ($pass_lenght === null) {
-    echo "You must specify a password length with the --length option.\n";
+if ($passLenght === null) {
+    echo "You must specify a password lenght with the --lenght option.\n";
     exit;
 }
 
 $chars = characters_generator();
-$final_password = password_generator($chars, $pass_lenght) . "\n";
+$finalPassword = password_generator($chars, $passLenght) . "\n";
 
-$lenght_check = check_password_lenght($final_password);
-echo "$lenght_check" . "\n";
-echo "$final_password";
+$lenghtCheck = check_password_lenght($finalPassword);
+echo "$lenghtCheck" . "\n";
+echo "$finalPassword";
 
 ?>
