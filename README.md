@@ -1,4 +1,4 @@
-# php-personal-password-generator
+# Personal password generator
 
 This is a simple password generator in PHP that was created with the intention to study the Language!
 
