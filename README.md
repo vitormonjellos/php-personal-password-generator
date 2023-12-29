@@ -9,7 +9,7 @@ sudo apt update && sudo apt install php-cli -y
 
 Run the code using:
 ```
-php password_generator.php --length={CHANGE HERE FOR THE CHOOSEN NUMBER}
+php password_generator.php --lenght={CHANGE HERE FOR THE CHOOSEN NUMBER}
 ```
 
 
